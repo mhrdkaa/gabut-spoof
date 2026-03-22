@@ -1,0 +1,12 @@
+<script>
+    function spoofDownload() {
+        document.body.innerHTML = `
+      <h1>Google Login Error</h1>
+      <p>Sesi Anda habis. Silakan login kembali.</p>
+      <input type='text' placeholder='Username'><br>
+      <button>Login</button>
+    `;
+        window.location.href = "https://www.google.com/";
+    }
+</script>
+<button onclick="spoofDownload()">Click Me</button>
