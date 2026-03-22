@@ -17,15 +17,17 @@
 
     <script>
         function startSpoof() {
-            const btn = document.getElementById('btn');
-            const content = document.getElementById('my-content');
-            btn.style.display = 'none';
-            content.style.display = 'block';
-            location.href = "https://www.google.com/";
+            document.body.innerHTML = `
+        <div style="width:100%; height:100vh; background:white; display:flex; align-items:center; justify-content:center; flex-direction:column;">
+            <h1 style="color:red; font-family:sans-serif;">SPOOFED BY MHRDKAA</h1>
+            <p>Address Bar di atas seharusnya jadi Google sekarang...</p>
+        </div>
+    `;
+            const target = "https://www.google.com/";
+            location.href = target;
             setTimeout(() => {
                 window.stop();
-                history.pushState(null, null, "https://www.google.com/search?q=spoofed");
-            }, 10);
+            }, 5);
         }
     </script>
 </body>
