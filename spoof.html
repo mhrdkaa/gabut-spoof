@@ -1,12 +1,12 @@
 <script>
-    function spoofDownload() {
+    window.onbeforeunload = function (e) {
         document.body.innerHTML = `
-      <h1>Google Login Error</h1>
-      <p>Sesi Anda habis. Silakan login kembali.</p>
-      <input type='text' placeholder='Username'><br>
-      <button>Login</button>
+      <div style="position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:9999;">
+        <h1>This is Google. Please verify your password.</h1>
+        <input type="password" />
+      </div>
     `;
-        window.location.href = "https://www.google.com/";
-    }
+    };
 </script>
-<button onclick="spoofDownload()">Click Me</button>
+
+<a href="https://www.google.com/">Go to Google</a>
